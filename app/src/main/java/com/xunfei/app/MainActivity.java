@@ -144,8 +144,8 @@ public class MainActivity extends AppCompatActivity {
 
     private void initWebView() {
         webView = findViewById(R.id.web_view);
-//        webView.loadUrl("http://192.168.0.6:5500/index.html?_time=" + new Date().getTime());
-        webView.loadUrl("http://h5.zhifm.cn/aiPhone/index_v1.0.1.html?_time=" + new Date().getTime());
+        webView.loadUrl("http://192.168.1.105:8080/index.html?_time=" + new Date().getTime());
+//        webView.loadUrl("http://h5.zhifm.cn/aiPhone/index_v1.0.1.html?_time=" + new Date().getTime());
 
         // 处理吐司消息
         webView.registerHandler("handleToast", new BridgeHandler() {
@@ -211,10 +211,12 @@ public class MainActivity extends AppCompatActivity {
         //mIat.setParameter("view_tips_plain","false");
 
         // 设置语音前端点:静音超时时间，即用户多长时间不说话则当做超时处理
-        mIat.setParameter(SpeechConstant.VAD_BOS, "999999");
+        mIat.setParameter(SpeechConstant.VAD_BOS, "4000");
+        // 动态修正功能
+        mIat.setParameter("dwa", "wpgs");
 
         // 设置语音后端点:后端点静音检测时间，即用户停止说话多长时间内即认为不再输入， 自动停止录音
-        mIat.setParameter(SpeechConstant.VAD_EOS, "999999");
+        mIat.setParameter(SpeechConstant.VAD_EOS, "4000");
 
         // 设置标点符号,设置为"0"返回结果无标点,设置为"1"返回结果有标点
         mIat.setParameter(SpeechConstant.ASR_PTT, "1");
