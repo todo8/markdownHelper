@@ -2,5 +2,5 @@
 <resources>
     <string name="app_name">AI麦克风</string>
     <!-- 请替换成在语音云官网申请的appid  兼职：5f54ec68 , 自己：5af63ec2-->
-    <string name="app_id">5f54ec68</string>
+    <string name="app_id">5af63ec2</string>
 </resources>

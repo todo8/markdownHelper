@@ -9,6 +9,8 @@ import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
+import android.os.Vibrator;
+import android.app.Service;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -37,7 +39,7 @@ import java.util.Map;
 
 public class MainActivity extends AppCompatActivity {
     private static String TAG = MainActivity.class.getSimpleName();
-
+    private Vibrator mvibrator ;
     private Toast mToast;
 
     // JS Bridge
@@ -133,6 +135,7 @@ public class MainActivity extends AppCompatActivity {
 
         requestPermissions();
 
+        mvibrator = (Vibrator) getSystemService(Service.VIBRATOR_SERVICE);
         mToast = Toast.makeText(this, "", Toast.LENGTH_SHORT);
 
         // 初始化识别无UI识别对象
@@ -154,6 +157,21 @@ public class MainActivity extends AppCompatActivity {
                 toast(data);
             }
         });
+        webView.registerHandler("handleVibrate", new BridgeHandler() {
+            @Override
+            public void handler(String data, CallBackFunction function) {
+                vibrate( Integer.parseInt(data));
+            }
+        });
+        /*webView.registerHandler("sendEvent", new BridgeHandler() {
+            @Override
+            public void handler(String datastr, CallBackFunction function) {
+                JSONObject data = JSONObject.fromObject(datastr);
+                String eventName  = data.getString('eventName');
+                if(eventName == 'toast') toast(data.getString('msg'));
+                else if(eventName == 'vibrator') vibrate( data.getInt('time') );
+            }
+        });*/
 
         // 处理语音按下
         webView.registerHandler("handleVoiceDown", new BridgeHandler() {
@@ -161,6 +179,7 @@ public class MainActivity extends AppCompatActivity {
             public void handler(String data, CallBackFunction function) {
                 buffer.setLength(0);
                 mIatResults.clear();
+//                vibrate(1000);
                 initMIatParam();
                 int returnCode = mIat.startListening(mRecognizerListener);
                 function.onCallBack("sssssssss");
@@ -230,6 +249,10 @@ public class MainActivity extends AppCompatActivity {
         mToast.setText(str);
         mToast.show();
     }
+    private void vibrate(int time) {
+//        if( time == null ) time = 100 ;
+        mvibrator.vibrate( time);
+    }
 
     private void requestPermissions() {
         try {
@@ -243,7 +266,7 @@ public class MainActivity extends AppCompatActivity {
                             Manifest.permission.WRITE_SETTINGS,
                             Manifest.permission.READ_EXTERNAL_STORAGE,
                             Manifest.permission.RECORD_AUDIO,
-                            Manifest.permission.READ_CONTACTS
+//                            Manifest.permission.READ_CONTACTS
                     }, 0x0010);
                 }
 
