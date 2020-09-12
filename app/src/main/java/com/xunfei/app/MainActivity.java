@@ -12,6 +12,7 @@ import android.os.Environment;
 import android.os.Vibrator;
 import android.app.Service;
 import android.util.Log;
+import android.webkit.WebSettings;
 import android.widget.Toast;
 
 import com.github.lzyzsd.jsbridge.BridgeHandler;
@@ -100,6 +101,7 @@ public class MainActivity extends AppCompatActivity {
             String sn = null;
             String pgs = null;
             String rg = null;
+            String origin = "" ;
             // 读取json结果中的sn字段
             try {
                 JSONObject resultJson = new JSONObject(results.getResultString());
@@ -109,6 +111,12 @@ public class MainActivity extends AppCompatActivity {
             } catch (JSONException e) {
                 e.printStackTrace();
             }
+
+            StringBuffer originBuffer = new StringBuffer();
+            for (String key : mIatResults.keySet()) {
+                originBuffer.append(mIatResults.get(key));
+            }
+            origin = originBuffer.toString() ;
             //如果pgs是rpl就在已有的结果中删除掉要覆盖的sn部分
             if (pgs.equals("rpl")) {
                 String[] strings = rg.replace("[", "").replace("]", "").split(",");
@@ -124,7 +132,7 @@ public class MainActivity extends AppCompatActivity {
             for (String key : mIatResults.keySet()) {
                 resultBuffer.append(mIatResults.get(key));
             }
-            launchHandleVoiceResult(MapDTO.to("return_code", ErrorCode.SUCCESS, "data", resultBuffer.toString(), "is_last", isLast));
+            launchHandleVoiceResult(MapDTO.to("return_code", ErrorCode.SUCCESS, "data", resultBuffer.toString(), "pgs", pgs , "origin",origin, "is_last", isLast));
 //            launchHandleVoiceResult(MapDTO.to("return_code", ErrorCode.SUCCESS, "data", JsonParser.parseIatResult(results.getResultString()), "is_last", isLast));
         }
 
@@ -166,6 +174,8 @@ public class MainActivity extends AppCompatActivity {
 
     private void initWebView() {
         webView = findViewById(R.id.web_view);
+        WebSettings webSettings = webView.getSettings();
+        webSettings.setCacheMode(WebSettings.LOAD_NO_CACHE); // 方便测试，关闭了缓存。
         webView.loadUrl("http://192.168.1.105:8080/index.html?_time=" + new Date().getTime());
 //        webView.loadUrl("http://h5.zhifm.cn/aiPhone/index_v1.0.1.html?_time=" + new Date().getTime());
 
@@ -220,7 +230,7 @@ public class MainActivity extends AppCompatActivity {
         webView.callHandler("handleVoiceResult", new Gson().toJson(data), new CallBackFunction() {
             @Override
             public void onCallBack(String data) {
-                Log.i(TAG, "callHandler = handleVoiceResult, data from web = " + data);
+                Log.i(TAG, "callHandler = handleVoiceResult,  data from web = " + data);
             }
         });
     }
