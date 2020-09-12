@@ -106,7 +106,9 @@ public class MainActivity extends AppCompatActivity {
             for (String key : mIatResults.keySet()) {
                 resultBuffer.append(mIatResults.get(key));
             }
+            System.out.print( JsonParser.parseIatResult(results.getResultString()) );
             launchHandleVoiceResult(MapDTO.to("return_code", ErrorCode.SUCCESS, "data", resultBuffer.toString(), "is_last", isLast));
+//            launchHandleVoiceResult(MapDTO.to("return_code", ErrorCode.SUCCESS, "data", JsonParser.parseIatResult(results.getResultString()), "is_last", isLast));
         }
 
         @Override
@@ -132,7 +134,7 @@ public class MainActivity extends AppCompatActivity {
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
+        Log.i(TAG, "log test" );
         requestPermissions();
 
         mvibrator = (Vibrator) getSystemService(Service.VIBRATOR_SERVICE);
@@ -182,7 +184,7 @@ public class MainActivity extends AppCompatActivity {
 //                vibrate(1000);
                 initMIatParam();
                 int returnCode = mIat.startListening(mRecognizerListener);
-                function.onCallBack("sssssssss");
+//                function.onCallBack("sssssssss");
 //                function.onCallBack(new Gson().toJson(MapDTO.to("return_code", returnCode)));
             }
         });
@@ -232,7 +234,7 @@ public class MainActivity extends AppCompatActivity {
         // 设置语音前端点:静音超时时间，即用户多长时间不说话则当做超时处理
         mIat.setParameter(SpeechConstant.VAD_BOS, "4000");
         // 动态修正功能
-        mIat.setParameter("dwa", "wpgs");
+//        mIat.setParameter("dwa", "wpgs");
 
         // 设置语音后端点:后端点静音检测时间，即用户停止说话多长时间内即认为不再输入， 自动停止录音
         mIat.setParameter(SpeechConstant.VAD_EOS, "4000");
