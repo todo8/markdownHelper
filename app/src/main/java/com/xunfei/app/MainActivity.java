@@ -88,25 +88,42 @@ public class MainActivity extends AppCompatActivity {
         @Override
         public void onEndOfSpeech() {
             // 此回调表示：检测到了语音的尾端点，已经进入识别过程，不再接受语音输入
-//            toast("结束说话");
+            toast("结束说话");
+            launchHandleVoiceEnd(MapDTO.to("return_code", ErrorCode.SUCCESS, "data", "结束说话"));
         }
 
         @Override
         public void onResult(RecognizerResult results, boolean isLast) {
             Log.d(TAG, results.getResultString());
+            String text = JsonParser.parseIatResult(results.getResultString());
+
             String sn = null;
+            String pgs = null;
+            String rg = null;
+            // 读取json结果中的sn字段
             try {
-                sn = new JSONObject(results.getResultString()).optString("sn");
+                JSONObject resultJson = new JSONObject(results.getResultString());
+                sn = resultJson.optString("sn");
+                pgs = resultJson.optString("pgs");
+                rg = resultJson.optString("rg");
             } catch (JSONException e) {
                 e.printStackTrace();
             }
-            mIatResults.put(sn, JsonParser.parseIatResult(results.getResultString()));
+            //如果pgs是rpl就在已有的结果中删除掉要覆盖的sn部分
+            if (pgs.equals("rpl")) {
+                String[] strings = rg.replace("[", "").replace("]", "").split(",");
+                int begin = Integer.parseInt(strings[0]);
+                int end = Integer.parseInt(strings[1]);
+                for (int i = begin; i <= end; i++) {
+                    mIatResults.remove(i+"");
+                }
+            }
 
-            StringBuilder resultBuffer = new StringBuilder();
+            mIatResults.put(sn, text);
+            StringBuffer resultBuffer = new StringBuffer();
             for (String key : mIatResults.keySet()) {
                 resultBuffer.append(mIatResults.get(key));
             }
-            System.out.print( JsonParser.parseIatResult(results.getResultString()) );
             launchHandleVoiceResult(MapDTO.to("return_code", ErrorCode.SUCCESS, "data", resultBuffer.toString(), "is_last", isLast));
 //            launchHandleVoiceResult(MapDTO.to("return_code", ErrorCode.SUCCESS, "data", JsonParser.parseIatResult(results.getResultString()), "is_last", isLast));
         }
@@ -134,7 +151,7 @@ public class MainActivity extends AppCompatActivity {
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        Log.i(TAG, "log test" );
+        Log.d(TAG, "create log test" );
         requestPermissions();
 
         mvibrator = (Vibrator) getSystemService(Service.VIBRATOR_SERVICE);
@@ -207,6 +224,13 @@ public class MainActivity extends AppCompatActivity {
             }
         });
     }
+    private void launchHandleVoiceEnd(Object data) {
+        webView.callHandler("handleVoiceEnd" , new Gson().toJson(data), new CallBackFunction() {
+            @Override
+            public void onCallBack(String data) {
+            }
+        });
+    }
 
     private void initMIatParam() {
         // 清空参数
@@ -234,7 +258,7 @@ public class MainActivity extends AppCompatActivity {
         // 设置语音前端点:静音超时时间，即用户多长时间不说话则当做超时处理
         mIat.setParameter(SpeechConstant.VAD_BOS, "4000");
         // 动态修正功能
-//        mIat.setParameter("dwa", "wpgs");
+        mIat.setParameter("dwa", "wpgs");
 
         // 设置语音后端点:后端点静音检测时间，即用户停止说话多长时间内即认为不再输入， 自动停止录音
         mIat.setParameter(SpeechConstant.VAD_EOS, "4000");
