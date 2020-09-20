@@ -5,7 +5,9 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 
 import android.Manifest;
+import android.content.IntentFilter;
 import android.content.pm.PackageManager;
+import android.net.ConnectivityManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
@@ -38,10 +40,11 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements NetworkConnectChangedReceiver.ConnectChangedListener {
     private static String TAG = MainActivity.class.getSimpleName();
     private Vibrator mvibrator ;
     private Toast mToast;
+    private NetworkConnectChangedReceiver connectChangedReceiver;
 
     // JS Bridge
     private BridgeWebView webView;
@@ -164,6 +167,13 @@ public class MainActivity extends AppCompatActivity {
 
         mvibrator = (Vibrator) getSystemService(Service.VIBRATOR_SERVICE);
         mToast = Toast.makeText(this, "", Toast.LENGTH_SHORT);
+        if (connectChangedReceiver == null) {
+            connectChangedReceiver = new NetworkConnectChangedReceiver();
+        }
+        IntentFilter filter = new IntentFilter();
+        filter.addAction(ConnectivityManager.CONNECTIVITY_ACTION);
+        registerReceiver(connectChangedReceiver, filter);
+        connectChangedReceiver.setConnectChangeListener(this);
 
         // 初始化识别无UI识别对象
         // 使用SpeechRecognizer对象，可根据回调消息自定义界面；
@@ -172,12 +182,28 @@ public class MainActivity extends AppCompatActivity {
         initWebView();
     }
 
+    @Override
+    public void wifiNetwork(boolean flag) {
+        Log.e("linksu", "wifiNetwork: " + flag);
+        if( flag && webView != null ) webView.reload();
+    }
+    @Override
+    public void notNetWork() {
+        Log.e("notNetWork", "notNetWork: ");
+    }
+
+    @Override
+    public void dataNetwork(boolean flag) {
+        Log.e("linksu", "onReceive(dataNetwork:273) 切换到数据流量");
+    }
+
+
     private void initWebView() {
         webView = findViewById(R.id.web_view);
         WebSettings webSettings = webView.getSettings();
         webSettings.setCacheMode(WebSettings.LOAD_NO_CACHE); // 方便测试，关闭了缓存。
-        webView.loadUrl("http://192.168.1.105:8080/index.html?_time=" + new Date().getTime());
-//        webView.loadUrl("http://h5.zhifm.cn/aiPhone/index_v1.0.1.html?_time=" + new Date().getTime());
+//        webView.loadUrl("http://192.168.1.105:8080/index.html?_time=" + new Date().getTime());
+        webView.loadUrl("http://ai.7dtime.com/index.html?_time=" + new Date().getTime());
 
         // 处理吐司消息
         webView.registerHandler("handleToast", new BridgeHandler() {

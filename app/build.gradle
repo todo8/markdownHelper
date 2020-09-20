@@ -8,8 +8,8 @@ android {
         applicationId "com.xunfei.app"
         minSdkVersion 16
         targetSdkVersion 30
-        versionCode 1
-        versionName "1.0"
+        versionCode 2002
+        versionName "2.0.2.0919"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
