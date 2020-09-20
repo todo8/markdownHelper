@@ -1,4 +1,4 @@
-package com.xunfei.app.util;
+package com.xunfei.aiphone.util;
 
 import java.util.regex.Pattern;
 import android.content.Context;

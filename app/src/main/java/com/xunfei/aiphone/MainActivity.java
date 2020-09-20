@@ -1,6 +1,5 @@
-package com.xunfei.app;
+package com.xunfei.aiphone;
 
-import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 
@@ -29,8 +28,9 @@ import com.iflytek.cloud.SpeechConstant;
 import com.iflytek.cloud.SpeechError;
 import com.iflytek.cloud.SpeechRecognizer;
 import com.iflytek.cloud.SpeechUtility;
-import com.xunfei.app.dto.MapDTO;
-import com.xunfei.app.util.JsonParser;
+import com.xunfei.aiphone.dto.MapDTO;
+import com.xunfei.aiphone.util.JsonParser;
+import com.xunfei.aiphone.R;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -38,7 +38,6 @@ import org.json.JSONObject;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
-import java.util.Map;
 
 public class MainActivity extends AppCompatActivity implements NetworkConnectChangedReceiver.ConnectChangedListener {
     private static String TAG = MainActivity.class.getSimpleName();

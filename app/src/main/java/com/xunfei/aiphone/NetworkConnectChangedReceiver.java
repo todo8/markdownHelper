@@ -1,4 +1,4 @@
-package com.xunfei.app;
+package com.xunfei.aiphone;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;

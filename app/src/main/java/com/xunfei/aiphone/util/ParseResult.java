@@ -1,4 +1,4 @@
-package com.xunfei.app.util;
+package com.xunfei.aiphone.util;
 
 import android.graphics.Point;
 import android.text.TextUtils;

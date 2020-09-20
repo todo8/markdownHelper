@@ -1,4 +1,4 @@
-package com.xunfei.app.util;
+package com.xunfei.aiphone.util;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;

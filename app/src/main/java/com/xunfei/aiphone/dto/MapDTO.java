@@ -1,4 +1,4 @@
-package com.xunfei.app.dto;
+package com.xunfei.aiphone.dto;
 
 import java.util.HashMap;
 import java.util.Map;

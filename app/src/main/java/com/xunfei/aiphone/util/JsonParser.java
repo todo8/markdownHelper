@@ -1,10 +1,8 @@
-package com.xunfei.app.util;
+package com.xunfei.aiphone.util;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.json.JSONTokener;
-
-import android.util.Log;
 
 /**
  * Json结果解析类
