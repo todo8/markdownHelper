@@ -184,7 +184,10 @@ public class MainActivity extends AppCompatActivity implements NetworkConnectCha
     @Override
     public void wifiNetwork(boolean flag) {
         Log.e("linksu", "wifiNetwork: " + flag);
-        if( flag && webView != null ) webView.reload();
+        if( flag && webView != null ) {
+            webView.reload();
+            webView.clearCache(true);
+        }
     }
     @Override
     public void notNetWork() {
@@ -200,10 +203,17 @@ public class MainActivity extends AppCompatActivity implements NetworkConnectCha
     private void initWebView() {
         webView = findViewById(R.id.web_view);
         WebSettings webSettings = webView.getSettings();
-        webSettings.setCacheMode(WebSettings.LOAD_NO_CACHE); // 方便测试，关闭了缓存。
+        webSettings.setDomStorageEnabled(true);  // 开启 DOM storage 功能
+        webSettings.setAppCacheMaxSize(1024*1024*8);
+        String appCachePath = this.getApplicationContext().getCacheDir().getAbsolutePath();
+        webSettings.setAppCachePath(appCachePath);
+        webSettings.setAllowFileAccess(true);    // 可以读取文件缓存
+        webSettings.setAppCacheEnabled(true);    //开启H5(APPCache)缓存功能
+//        webSettings.setCacheMode(WebSettings.LOAD_NO_CACHE); // 方便测试，关闭了缓存。
 //        webView.loadUrl("http://192.168.1.105:8080/index.html?_time=" + new Date().getTime());
-        webView.loadUrl("http://ai.7dtime.com/index.html?_time=" + new Date().getTime());
-
+//        webView.loadUrl("http://ai.7dtime.com/h5/index.html?_time=" + new Date().getTime());
+        webView.loadUrl("http://ai.7dtime.com/h5/index.html");
+//
         // 处理吐司消息
         webView.registerHandler("handleToast", new BridgeHandler() {
             @Override
