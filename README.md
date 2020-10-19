@@ -1,5 +1,5 @@
 # markdownHelper
-效果图，
+gif动态效果图，点击图片可以看到动态效果。页面中可能因为文件过大，没有加载和显示动态图。
 ![](http://cdn.7dtime.com/other/demo.gif)
 
 网址：
